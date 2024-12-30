@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+    php:
+        image: gte451f/smores
+        volumes:
+            - .:/var/www:delegated
+            - ./docker/php/cli/xdebug.ini:/etc/php/8.3/mods-available/xdebug.ini
+            - ./docker/php/cli/php.ini:/etc/php/8.3/cli/php.ini
+            - ./docker/nginx/default:/etc/nginx/sites-available/default
+            - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./docker/.bashrc:/root/.bashrc
+        ports:
+            - ${HTTP_PUBLISHED_PORT:-80}:80
+        env_file:
+            - ./docker/php/php.env
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        networks:
+            - es_network
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0 # Replace with your desired version
+        container_name: elasticsearch
+        environment:
+            - discovery.type=single-node
+            - bootstrap.memory_lock=true
+            - xpack.security.enabled=false # Disable security for simplicity (not recommended for production)
+            - cluster.name=es-docker-cluster
+            - node.name=es-node-1
+            - network.host=0.0.0.0
+            - ES_JAVA_OPTS=-Xms512m -Xmx512m # Adjust heap size
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        volumes:
+            - es_data:/usr/share/elasticsearch/data
+        networks:
+            - es_network
+volumes:
+    es_data:
+        driver: local
+networks:
+    es_network:
+        driver: bridge

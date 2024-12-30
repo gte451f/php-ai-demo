@@ -1,0 +1,24 @@
+# This is a version for v3 xdebug
+
+# enable the extension
+zend_extension=xdebug.so
+
+# new in v3
+# https://xdebug.org/docs/all_settings#start_with_request
+xdebug.start_with_request = yes
+
+# new in v3
+# https://xdebug.org/docs/all_settings#discover_client_host
+xdebug.discover_client_host = true
+
+# https://xdebug.org/docs/all_settings#remote_handler
+xdebug.remote_handler=dbgp
+
+# deprecated in v3
+# https://xdebug.org/docs/all_settings#idekey
+# xdebug.idekey = PHPSTORM
+xdebug.session=xdebug_is_great
+
+# new setting
+# https://xdebug.org/docs/upgrade_guide
+xdebug.mode=debug
